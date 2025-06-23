@@ -4,14 +4,35 @@
 
 The Smart Garden Automation System, FloraOS, is an intelligent platform for urban garden management, built using Google's Agent Development Kit (ADK). It demonstrates the power of multi-agent systems to automate complex environmental monitoring and decision-making processes. FloraOS coordinates weather, soil health, and plant vision data to provide actionable insights and simulated automated responses for gardeners, showcasing how sophisticated automation, typically seen in robotics or IT, can be applied to biological and environmental systems. This project directly addresses the "Automation of Complex Processes" challenge by designing a multi-agent workflow to manage the intricate tasks of urban gardening.
 
+## Core Problem & Our Solution
+
+Managing urban gardens involves constant monitoring of diverse data (soil, weather, plant health) and coordinating actions (watering, nutrients). Manual management is inefficient.
+
+**FloraOS automates this by orchestrating four distinct agents via ADK:**
+
+1.  **SoilSensorAgent:** Simulates soil sensor readings (moisture, pH, NPK) from a predefined dataset, publishing structured data.
+2.  **WeatherAgent:** Fetches current weather and forecasts using the OpenWeatherMap API (or simulated data), publishing structured weather updates.
+3.  **PlantVisionAgent:** Analyzes plant images using **Google Cloud Vertex AI Vision** (Custom Classification Model) to assess health status (e.g., "Needs Water," "Nutrient Deficient"), publishing these assessments.
+4.  **GardenControlAgent (The Brain):** Subscribes to data from all other agents. Applies rule-based logic (e.g., if soil is dry, no rain forecasted, and plant is wilting, then trigger watering) and publishes (simulated) action commands.
+
+This creates an automated feedback loop for garden care.
+
 ## ✨ Features & Functionality
 
 **Overview:** FloraOS automates the monitoring and management of a simulated urban garden by orchestrating specialized agents that gather diverse environmental data, analyze it, and determine appropriate actions.
 
+**Key Features & Innovation**
+
+*   **Multi-Agent Orchestration with ADK:** Demonstrates ADK's power to coordinate specialized agents for a complex task.
+*   **AI-Powered Perception:** Integrates Vertex AI Vision for intelligent plant health assessment from images.
+*   **Autonomous Decision-Making:** The GardenControlAgent makes data-driven decisions based on inputs from multiple sources.
+*   **Environmental Automation:** Applies sophisticated automation concepts to a biological/environmental system.
+*   **Structured Data Flow:** Clear JSON message schemas for robust inter-agent communication.
+
 **Detailed Breakdown & Agent Orchestration:**
 
 FloraOS employs a multi-agent system where each agent has a distinct role, communicating and collaborating via ADK to automate the garden management workflow:
-
+  
 1.  **SoilSensorAgent:**
     *   **Function:** Simulates reading and publishing crucial soil sensor data.
     *   **Data:** Generates or reads from a predefined dataset (CSV/JSON) mimicking soil conditions (moisture %, pH, nutrient levels - NPK). This data is structured similarly to an IoT Core message payload.
@@ -40,13 +61,6 @@ FloraOS employs a multi-agent system where each agent has a distinct role, commu
     *   **Output:** Publishes simulated actuation commands (e.g., `{ "timestamp": "...", "action": "ACTIVATE_WATERING", "target": "Bed A", "duration_minutes": 5 }`).
     *   **Automation Role:** Orchestrates the overall process by consuming information from specialized agents, making intelligent decisions, and dispatching commands, thus automating a complex multi-step feedback loop.
 
-**Problem Solved:**
-Managing urban gardens or similar environmental systems involves continuously monitoring diverse, dynamic data sources (soil conditions, weather patterns, plant health indicators) and coordinating timely actions (watering, nutrient application, pest control). Performing these tasks manually is labor-intensive, inefficient, and often suboptimal. FloraOS automates this complex process by:
-*   Continuously gathering and structuring disparate data.
-*   Applying intelligent logic to interpret this data in context.
-*   Automatically determining and dispatching (simulated) corrective actions.
-This showcases an end-to-end automated workflow for environmental management.
-
 ## 🛠️ Tech Stack 
 
 *   **Core Orchestration:** Google Agent Development Kit (ADK)
@@ -58,148 +72,67 @@ This showcases an end-to-end automated workflow for environmental management.
 *   **Data Handling:** JSON (for inter-agent messages), CSV/JSON (for simulated sensor data).
 *   **Version Control:** Git
 
-**Google ADK Integration:**
-ADK is the central nervous system of FloraOS.
-*   **Agent Registration & Discovery:** Agents register with the ADK runtime.
-*   **Message Bus (Pub/Sub):** Clear message schemas and topics (e.g., `garden/soil_data`, `garden/weather_data`, `garden/plant_health`, `garden/control_actions`) are defined for inter-agent communication. Agents publish their data to specific topics, and other agents (like the GardenControlAgent) subscribe to relevant data streams.
-*   **Orchestration of Workflows:** ADK facilitates the flow of information and the sequence of operations, enabling the GardenControlAgent to react to combined inputs from multiple specialized agents. The demo explicitly shows messages being passed and the system reacting autonomously.
-
 ## 📊 Data Sources
 
 *   **Soil Data:** Simulated data generated by the `SoilSensorAgent` or read from local CSV/JSON files. This data is curated based on horticultural knowledge to represent various soil states (e.g., optimal, dry, nutrient-deficient).
 *   **Weather Data:**
     *   **Primary:** Real-time weather data fetched from the OpenWeatherMap API by the `WeatherAgent`.
     *   **Fallback:** Simulated weather data read from local JSON files for offline testing and controlled demo scenarios.
-*   **Plant Image Data:** A curated library of local image files (`.jpg`, `.png`) representing different plant health conditions (healthy, wilting, nutrient-deficient). These images are fed to the `PlantVisionAgent` for analysis via Vertex AI. Images were sourced from public datasets (e.g., Kaggle selections) and organized for model training and agent input.
+*   **Plant Image Data:** A curated library of local image files (`.jpg`, `.png`) representing different plant health conditions (healthy, wilting, nutrient-deficient). These images are fed to the `PlantVisionAgent` for analysis via Vertex AI. Images were sourced from public datasets, Wikimedia Commons, and organized for model training and agent input.
 
-## 💡 Findings & Learnings
+## 🏛️ Architecture
 
-*   **Power of Specialization:** Breaking down a complex problem like garden management into specialized agent roles significantly simplifies development and allows for more focused intelligence within each agent.
-*   **ADK for Orchestration:** ADK proved to be an effective framework for managing communication and dependencies between agents, making the development of the overall workflow more structured.
-*   **Vertex AI for Perception:** Integrating Vertex AI for plant image analysis was straightforward and added a powerful, real-world AI capability to the system, showcasing how advanced perception can be incorporated into agent workflows.
-*   **Data is Key:** The quality and structure of simulated data (especially for soil and initial plant health states) were critical for effectively training the PlantVision model and for demonstrating meaningful decision-making by the GardenControlAgent. Curating data based on domain knowledge, even when simulated, greatly enhances the realism and impact of the demo.
-*   **Challenge - Time Constraint:** Integrating multiple components (ADK, multiple agents, GCP services) within a short hackathon timeframe required strict prioritization (MVP first) and parallel development where possible. Having clear message schemas early on was crucial.
-*   **Learning - Asynchronous Nature:** Managing the asynchronous arrival of data from different agents and ensuring the GardenControlAgent makes decisions based on a coherent state of the garden requires careful design.
+1.  **Data Agents (Soil, Weather, PlantVision via Vertex AI)** independently gather and publish specific environmental data to ADK topics.
+2.  **ADK Message Bus** facilitates communication.
+3.  **GardenControlAgent** subscribes to all relevant data, analyzes the combined information, and publishes action commands.
+4.  *(See the full Architecture Diagram in the repository/detailed description for a visual representation).*
 
-## 🏛️ Architecture Diagram (Conceptual Description)
-
-FloraOS is architected as a distributed multi-agent system orchestrated by Google ADK.
-
-1.  **Input Agents (Data Producers):**
-    *   **SoilSensorAgent:** Reads from a local CSV/JSON data file (simulating IoT sensor inputs) and publishes structured soil data (moisture, pH, NPK) to an ADK topic (e.g., `garden/soil_data`).
-    *   **WeatherAgent:** Fetches data from the OpenWeatherMap API (or a local JSON file) and publishes structured weather data (temperature, humidity, precipitation forecast) to an ADK topic (e.g., `garden/weather_data`).
-    *   **PlantVisionAgent:**
-        *   Takes a path to a local image file as input (simulating a camera capture).
-        *   Sends this image to a **Google Cloud Vertex AI Vision endpoint** (Custom Image Classification Model).
-        *   Receives the classification result (e.g., "Needs Water," "Healthy").
-        *   Publishes a structured plant health assessment to an ADK topic (e.g., `garden/plant_health`).
-
-2.  **Central Orchestrator & Decision-Maker:**
-    *   **Google ADK Runtime:** Acts as the message bus and registry for all agents. It facilitates the publish/subscribe communication pattern.
-    *   **GardenControlAgent (The Brain):**
-        *   Subscribes to the `garden/soil_data`, `garden/weather_data`, and `garden/plant_health` topics via ADK.
-        *   Internally aggregates the latest data from these sources.
-        *   Applies a set of predefined rules (decision logic) based on the combined state of the garden.
-        *   Publishes (simulated) actuation commands (e.g., "ACTIVATE_WATERING," "DEPLOY_NUTRIENTS") to an ADK topic (e.g., `garden/control_actions`).
-
-3.  **Output/Actuation (Simulated):**
-    *   (Conceptual) An "ActuatorAgent" or a simple logger could subscribe to `garden/control_actions` to display the commands determined by the GardenControlAgent, thus demonstrating the completion of the automated loop.
-
-**Data Flow:** Data flows from specialized sensor/perception agents through ADK to the central GardenControlAgent, which then dispatches action commands back through ADK. This forms a closed-loop automated system.
-
-## 🚀 Getting Started / Setup
+## 🚀 Getting Started
 
 **Prerequisites:**
 
-*   Python 3.7+
-*   `pip` (Python package installer)
-*   Google Cloud SDK (`gcloud` CLI) installed and authenticated (for Vertex AI interaction).
-*   A Google Cloud Project with Billing enabled and the Vertex AI API enabled.
-*   An OpenWeatherMap API Key (free tier is sufficient).
-*   Git for cloning the repository.
-*   Access to install Google ADK (refer to official ADK documentation for installation).
+*   Python 3.7+ & `pip`
+*   Google Cloud SDK (`gcloud` CLI) authenticated (for Vertex AI)
+*   OpenWeatherMap API Key
+*   Git
+*   Google ADK (see official docs for installation)
 
-**Installation Steps:**
+**Installation & Setup:**
 
-1.  **Clone the Repository:**
+1.  **Clone:**
     ```bash
     git clone [Insert URL to your public GitHub repository here]
-    cd flora-os # Or your repository's root directory
+    cd flora-os
     ```
-
-2.  **Set up a Python Virtual Environment (Recommended):**
+2.  **Virtual Environment (Recommended):**
     ```bash
     python -m venv venv
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    source venv/bin/activate # or venv\Scripts\activate
     ```
-
 3.  **Install Dependencies:**
-    A `requirements.txt` file should be present in the repository.
     ```bash
     pip install -r requirements.txt
-    pip install google-adk # Or the specific ADK package name
+    pip install google-adk # Or specific ADK package
     ```
-    *Note: Ensure `google-cloud-aiplatform` is in your `requirements.txt` for Vertex AI.*
+4.  **Environment Variables:**
+    *   Create a `.env` file (see example in repo or detailed docs).
+    *   Add `OPENWEATHER_API_KEY=your_key_here`.
+    *   Configure GCP Project ID, Region, and Vertex AI Endpoint ID (e.g., in `.env` or ensure `gcloud` is set).
+        *   `GCP_PROJECT_ID=your-gcp-project-id`
+        *   `GCP_REGION=your-gcp-region`
+        *   `VERTEX_AI_ENDPOINT_ID=your-vertex-ai-endpoint-id`
 
-4.  **Set Up Environment Variables:**
-    You will need to configure API keys and GCP project details. Create a `.env` file in the root directory or in specific agent directories as required by your setup.
-    *   **For WeatherAgent:**
-        ```
-        OPENWEATHER_API_KEY=your_openweathermap_api_key_here
-        ```
-    *   **For PlantVisionAgent (and GCP access):**
-        Ensure your `gcloud` CLI is authenticated to the correct project, or set the following environment variables if running in an environment without implicit `gcloud` auth:
-        ```
-        GOOGLE_APPLICATION_CREDENTIALS=path/to/your-gcp-service-account-key.json # If using a service account
-        GCP_PROJECT_ID=your-gcp-project-id
-        GCP_REGION=your-gcp-region # e.g., us-central1
-        VERTEX_AI_ENDPOINT_ID=your-vertex-ai-plant-classifier-endpoint-id
-        ```
+## ⚙️ How to Run & Use
 
-5.  **Prepare Data:**
-    *   Ensure the simulated soil data (e.g., `soil_data.csv`) is in the expected location for the `SoilSensorAgent`.
-    *   Ensure the curated plant images are available for the `PlantVisionAgent`.
-    *   If using simulated weather data as a fallback, ensure the `weather_data.json` file is present.
-
-## ⚙️ Usage
-
-FloraOS is typically run by starting each agent. The agents will then communicate via ADK. You'll observe their interactions primarily through console logs, which will show published messages, received data, and decisions made by the `GardenControlAgent`.
-
-1.  **Start the ADK Runtime/Broker:** (Depending on your specific ADK setup, this might be a separate step or handled when agents connect).
-
-2.  **Run Each Agent:**
-    Open separate terminal windows for each agent. Navigate to the agent's directory (if structured that way) or run them from the root.
-
-    *   **Start SoilSensorAgent:**
-        ```bash
-        python agents/soilsensor_agent/agent.py # Adjust path as per your structure
-        ```
-    *   **Start WeatherAgent:**
-        ```bash
-        python agents/weather_agent/agent.py # Adjust path
-        ```
-    *   **Start PlantVisionAgent:**
-        This agent might be triggered to process an image or run in a loop processing a list of images.
-        ```bash
-        python agents/plantvision_agent/agent.py # Adjust path
-        ```
-    *   **Start GardenControlAgent:**
-        ```bash
-        python agents/gardencontrol_agent/agent.py # Adjust path
-        ```
-
-3.  **Observe the System:**
-    *   Watch the console output of each agent.
-    *   You should see the `SoilSensorAgent` and `WeatherAgent` publishing data periodically.
-    *   When the `PlantVisionAgent` processes an image, it will log its call to Vertex AI and the resulting health assessment.
-    *   The `GardenControlAgent` will log the data it receives from other agents.
-    *   When conditions in the (simulated) garden meet the criteria for one of its rules, the `GardenControlAgent` will log the triggered rule and the (simulated) action command it publishes (e.g., "ACTIVATE_WATERING").
-
-**Example Demo Scenario:**
-1.  Ensure `SoilSensorAgent` publishes data indicating low moisture (e.g., `moisture: 25`).
-2.  Ensure `WeatherAgent` publishes data indicating a low probability of rain (e.g., `precipitation_prob_next_12h: 0.05`).
-3.  Trigger `PlantVisionAgent` with an image of a wilting plant. Vertex AI should classify it as "Needs Water."
-4.  Observe the `GardenControlAgent` receive these three pieces of information and trigger its "watering" rule, publishing an "ACTIVATE_WATERING" command.
+1.  **Ensure ADK runtime/broker is active** (as per your ADK setup).
+2.  **Start each agent** in separate terminals (adjust paths as needed):
+    ```bash
+    python agents/soilsensor_agent/agent.py
+    python agents/weather_agent/agent.py
+    python agents/plantvision_agent/agent.py
+    python agents/gardencontrol_agent/agent.py
+    ```
+3.  **Observe:** Monitor agent console logs to see data publishing, Vertex AI classifications, and `GardenControlAgent` decisions and actions. Trigger different scenarios by changing input data/images.
 
 ## 🔗 Project Links
 
@@ -207,24 +140,12 @@ FloraOS is typically run by starting each agent. The agents will then communicat
 *   **Public Code Repository:** [Insert URL to your public GitHub repository here]
 *   **Demonstration Video:** [Insert URL to your YouTube or Vimeo demo video here]
 
-## 💡 Optional Developer Contributions
+## 👥 Team
 
-*(Fill this section if applicable, otherwise remove or state "N/A")*
-
-*   **Demo Video:**
-    *   [Link to your content] - 
-*   **ADK Open-Source Contribution:**
-    *   [Link to your GitHub profile/commit/PR/issue]
-
-## 👥 Team / Resources
-
-*   **Team:**
-    *   AI PM & AI/ML Engineer (Chichi)
-    *   Lead AI/ML Engineer (Susree)
-    *   Software Engineer (Rohit)
-*   **Resources:**
-    *   Thanks to Google for providing the Agent Development Kit and hosting this hackathon.
-    *   OpenWeatherMap for their weather API.
-    *   Wikimedia Commons used for training the PlantVisionAgent.
+*   Chichi (AI PM & AI/ML Engineer)
+*   Susree (Lead AI/ML Engineer)
+*   Rohit (Software Engineer)
 
 
+
+---
