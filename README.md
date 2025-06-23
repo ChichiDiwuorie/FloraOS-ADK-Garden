@@ -145,9 +145,9 @@ FloraOS employs a multi-agent system where each agent has a distinct role, commu
 
 ## 👥 Team
 
-*   Chichi (AI PM & AI/ML Engineer)
-*   Susree (Lead AI/ML Engineer)
-*   Rohit (Software Engineer)
+*   Chichi (AI PM): https://www.linkedin.com/in/chinwenduiwuorie/
+*   Susree (Lead AI/ML Engineer): https://www.linkedin.com/in/susree-jyotrimayee-jena-2a110824b/ 
+*   Rohit (Software Engineer): https://www.linkedin.com/in/rohitshukla001/
 
 
 
