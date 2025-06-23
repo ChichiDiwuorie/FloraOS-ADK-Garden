@@ -61,6 +61,9 @@ FloraOS employs a multi-agent system where each agent has a distinct role, commu
     *   **Output:** Publishes simulated actuation commands (e.g., `{ "timestamp": "...", "action": "ACTIVATE_WATERING", "target": "Bed A", "duration_minutes": 5 }`).
     *   **Automation Role:** Orchestrates the overall process by consuming information from specialized agents, making intelligent decisions, and dispatching commands, thus automating a complex multi-step feedback loop.
 
+<img width="1176" alt="image" src="https://github.com/user-attachments/assets/8f9c4379-c158-47f2-bc78-8777cc74328a" />
+
+
 ## 🛠️ Tech Stack 
 
 *   **Core Orchestration:** Google Agent Development Kit (ADK)
