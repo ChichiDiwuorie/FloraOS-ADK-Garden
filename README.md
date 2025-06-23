@@ -137,7 +137,7 @@ FloraOS employs a multi-agent system where each agent has a distinct role, commu
 ## 🔗 Project Links
 
 *   **Hosted Project:** [Insert URL to your deployed FloraOS application here - *If not applicable, state "The project is designed to be run locally. Please see GitHub repository for setup."*]
-*   **Public Code Repository:** [Insert URL to your public GitHub repository here]
+*   **Public Code Repository:** (https://github.com/rohitshukla001/GardenControlAgent)
 *   **Demonstration Video:** [Insert URL to your YouTube or Vimeo demo video here]
 
 ## 👥 Team
